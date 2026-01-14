@@ -5,8 +5,9 @@ variable "region" {
 }
 
 variable "ami_id" {
-  description = "AMI ID for the EC2 instance (e.g., Amazon Linux 2 or Ubuntu)"
+  description = "AMI ID for the EC2 instance (e.g., Amazon Linux 2 or Ubuntu). Leave empty to use latest Ubuntu 22.04"
   type        = string
+  default     = ""
 }
 
 variable "key_name" {

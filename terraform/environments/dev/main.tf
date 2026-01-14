@@ -1,5 +1,8 @@
-provider "aws" {
   region = var.region
+}
+
+locals {
+  ami_id = var.ami_id != "" ? var.ami_id : data.aws_ami.ubuntu.id
 }
 
 module "networking" {
@@ -10,6 +13,21 @@ module "networking" {
   public_subnets     = { "a" = "10.0.1.0/24", "b" = "10.0.2.0/24" }
   private_subnets    = { "a" = "10.0.3.0/24", "b" = "10.0.4.0/24" }
   availability_zones = ["${var.region}a", "${var.region}b"]
+}
+
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # Canonical
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
 }
 
 module "security" {
@@ -31,7 +49,7 @@ module "liberty_server" {
   source = "../../modules/compute"
 
   name               = "dev-liberty-server"
-  ami_id             = var.ami_id
+  ami_id             = local.ami_id
   instance_type      = "t3.small"
   subnet_id          = module.networking.private_subnet_ids[0] # App in private subnet
   security_group_ids = [module.security.liberty_sg_id]
@@ -51,7 +69,7 @@ module "monitoring_server" {
   source = "../../modules/compute"
 
   name               = "dev-monitoring-server"
-  ami_id             = var.ami_id
+  ami_id             = local.ami_id
   instance_type      = "t3.small"
   subnet_id          = module.networking.public_subnet_ids[0] # Public for access to Grafana
   security_group_ids = [module.security.monitoring_sg_id]
@@ -62,7 +80,7 @@ module "jenkins_server" {
   source = "../../modules/compute"
 
   name               = "dev-jenkins-server"
-  ami_id             = var.ami_id
+  ami_id             = local.ami_id
   instance_type      = "t3.medium" # Jenkins needs more RAM than minimal
   subnet_id          = module.networking.public_subnet_ids[0] # Public for access to UI
   security_group_ids = [module.security.jenkins_sg_id]
