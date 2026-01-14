@@ -5,6 +5,10 @@ locals {
   ami_id = var.ami_id != "" ? var.ami_id : data.aws_ami.ubuntu.id
 }
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 module "networking" {
   source = "../../modules/networking"
 
@@ -12,7 +16,7 @@ module "networking" {
   vpc_name           = "prod-vpc"
   public_subnets     = { "a" = "10.1.1.0/24", "b" = "10.1.2.0/24" }
   private_subnets    = { "a" = "10.1.3.0/24", "b" = "10.1.4.0/24" }
-  availability_zones = ["${var.region}a", "${var.region}b"]
+  availability_zones = slice(data.aws_availability_zones.available.names, 0, 2)
 }
 
 data "aws_ami" "ubuntu" {
