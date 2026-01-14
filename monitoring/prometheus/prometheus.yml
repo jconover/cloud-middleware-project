@@ -1,0 +1,21 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node_exporter'
+    # In a real AWS setup, use ec2_sd_configs.
+    # Here is an example of how it would look:
+    # ec2_sd_configs:
+    #   - region: us-east-1
+    #     port: 9100
+    static_configs:
+       - targets: ['liberty-server:9100', 'jenkins-server:9100']
+
+  - job_name: 'liberty'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['liberty-server:9080']

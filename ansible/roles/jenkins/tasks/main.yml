@@ -1,0 +1,31 @@
+---
+- name: Ensure Java 17 is installed
+  yum:
+    name: java-17-amazon-corretto-headless
+    state: present
+  become: true
+
+- name: Add Jenkins Repo
+  get_url:
+    url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+    dest: /etc/yum.repos.d/jenkins.repo
+  become: true
+
+- name: Import Jenkins Key
+  rpm_key:
+    state: present
+    key: https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+  become: true
+
+- name: Install Jenkins
+  yum:
+    name: jenkins
+    state: latest
+  become: true
+
+- name: Enable and Start Jenkins
+  service:
+    name: jenkins
+    enabled: yes
+    state: started
+  become: true

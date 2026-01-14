@@ -1,0 +1,6 @@
+---
+- name: restart liberty
+  service:
+    name: liberty
+    state: restarted
+  become: true

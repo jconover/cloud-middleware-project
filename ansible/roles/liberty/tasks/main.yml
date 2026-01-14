@@ -1,0 +1,61 @@
+---
+- name: Install Java 17 (Coretto)
+  yum:
+    name: java-17-amazon-corretto-headless
+    state: present
+  become: true
+
+- name: Create Liberty user
+  user:
+    name: liberty
+    state: present
+  become: true
+
+- name: Download Open Liberty
+  get_url:
+    url: https://public.dhe.ibm.com/ibmdl/export/pub/software/openliberty/runtime/release/23.0.0.12/openliberty-23.0.0.12.zip
+    dest: /tmp/openliberty.zip
+  become: true
+
+- name: Unzip Liberty
+  unarchive:
+    src: /tmp/openliberty.zip
+    dest: /opt
+    remote_src: yes
+    owner: liberty
+    group: liberty
+  become: true
+
+- name: Create default server
+  command: /opt/wlp/bin/server create defaultServer
+  args:
+    creates: /opt/wlp/usr/servers/defaultServer
+  become: true
+  become_user: liberty
+
+- name: Create systemd service for Liberty
+  copy:
+    dest: /etc/systemd/system/liberty.service
+    content: |
+      [Unit]
+      Description=IBM Open Liberty Application Server
+      After=network.target
+
+      [Service]
+      User=liberty
+      Group=liberty
+      Type=simple
+      ExecStart=/opt/wlp/bin/server run defaultServer
+      ExecStop=/opt/wlp/bin/server stop defaultServer
+
+      [Install]
+      WantedBy=multi-user.target
+  become: true
+  notify: restart liberty
+
+- name: Enable and Start Liberty
+  service:
+    name: liberty
+    enabled: yes
+    state: started
+  become: true

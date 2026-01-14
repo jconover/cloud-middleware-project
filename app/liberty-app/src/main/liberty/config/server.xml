@@ -1,0 +1,15 @@
+<server description="Liberty Demo Server">
+
+    <featureManager>
+        <feature>jakartaee-10.0</feature>
+        <feature>microprofile-6.0</feature>
+    </featureManager>
+
+    <httpEndpoint id="defaultHttpEndpoint" host="*" httpPort="9080" httpsPort="9443" />
+
+    <webApplication location="liberty-demo.war" contextRoot="/" />
+
+    <!-- Enable Metrics for Prometheus -->
+    <mpMetrics authentication="false"/>
+
+</server>

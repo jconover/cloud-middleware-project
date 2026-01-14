@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven 3'
+        jdk 'Java 17'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('app/liberty-app') {
+                    sh 'mvn clean package'
+                }
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                dir('app/liberty-app/target') {
+                    archiveArtifacts artifacts: '*.war', fingerprint: true
+                }
+            }
+        }
+
+        stage('Deploy to Dev') {
+            steps {
+                // In a real scenario, we might use the Ansible plugin or sh 'ansible-playbook'
+                // Here we assume Ansible is installed on the agent
+                dir('ansible') {
+                    sh '''
+                        ansible-playbook -i inventory/aws_ec2.yml playbooks/site.yml \
+                        --limit tag_Name_dev_liberty_server
+                    '''
+                }
+            }
+        }
+    }
+}

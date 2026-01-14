@@ -1,0 +1,21 @@
+---
+- name: Configure Jenkins Server
+  hosts: tag_Name_dev_jenkins_server # Assumes dynamic inventory naming
+  become: true
+  roles:
+    - common
+    - jenkins
+
+- name: Configure Liberty Server
+  hosts: tag_Name_dev_liberty_server
+  become: true
+  roles:
+    - common
+    - liberty
+
+- name: Configure Monitoring Server
+  hosts: tag_Name_dev_monitoring_server
+  become: true
+  roles:
+    - common
+    - monitoring
