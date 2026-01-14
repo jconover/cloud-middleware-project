@@ -22,6 +22,8 @@ Navigate to the desired environment (e.g., `dev`) and apply the infrastructure.
 
 ```bash
 cd terraform/environments/dev
+cp terraform.tfvars.example terraform.tfvars
+# Edit terraform.tfvars with your actual values (AMI ID, Key Name)
 terraform init
 terraform apply
 ```

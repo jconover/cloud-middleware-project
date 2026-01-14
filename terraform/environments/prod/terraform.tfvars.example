@@ -1,0 +1,8 @@
+# AWS Region (Optional, defaults to us-east-1)
+region = "us-east-1"
+
+# SSH Key Pair Name (Must exist in AWS)
+key_name = "my-prod-ssh-key"
+
+# AMI ID for EC2 Instances
+ami_id = "ami-0c55b159cbfafe1f0"
