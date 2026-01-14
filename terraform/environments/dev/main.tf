@@ -58,6 +58,17 @@ module "monitoring_server" {
   key_name           = var.key_name
 }
 
+module "jenkins_server" {
+  source = "../../modules/compute"
+
+  name               = "dev-jenkins-server"
+  ami_id             = var.ami_id
+  instance_type      = "t3.medium" # Jenkins needs more RAM than minimal
+  subnet_id          = module.networking.public_subnet_ids[0] # Public for access to UI
+  security_group_ids = [module.security.jenkins_sg_id]
+  key_name           = var.key_name
+}
+
 # Attach Liberty Server to Target Group
 resource "aws_lb_target_group_attachment" "liberty" {
   target_group_arn = module.load_balancer.target_group_arn
@@ -75,4 +86,8 @@ output "liberty_app_url" {
 
 output "monitoring_server_ip" {
   value = module.monitoring_server.public_ip
+}
+
+output "jenkins_server_ip" {
+  value = module.jenkins_server.public_ip
 }

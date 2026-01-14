@@ -30,6 +30,7 @@ terraform apply
 -   `eks_cluster_endpoint`: URL for the EKS cluster.
 -   `liberty_app_url`: URL for the Load Balancer (will return 503 until app is deployed).
 -   `monitoring_server_ip`: Public IP of the Monitoring Server.
+-   `jenkins_server_ip`: Public IP of the Jenkins Server.
 
 ## 2. Configuration Management (Ansible)
 Once infrastructure is up, configure the instances.
