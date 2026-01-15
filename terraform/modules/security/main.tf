@@ -1,7 +1,4 @@
-variable "vpc_id" {
-  description = "VPC ID where security groups will be created"
-  type        = string
-}
+
 
 resource "aws_security_group" "jenkins" {
   name        = "jenkins-sg"

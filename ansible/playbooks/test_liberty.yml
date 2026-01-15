@@ -1,0 +1,14 @@
+---
+- name: Test Liberty Server Connectivity
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Ping the host
+      ansible.builtin.ping:
+
+    - name: Check if Liberty port 9080 is reachable
+      ansible.builtin.wait_for:
+        port: 9080
+        timeout: 5
+        msg: "Port 9080 is not reachable on {{ inventory_hostname }}"
+      ignore_errors: true
